@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>本地打印服务测试</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <h2>{{message}}</h2>
+        <form>
+            <div class="form-group">
+                <label for="login_name">localhost</label>
+                <input type="text" id="login_name" class="form-control" placeholder="login_name" v-model="message">
+            </div>
+            <button type="button" class="btn btn-primay" v-on:click="print">print</button>
+            <button type="button" class="btn btn-danger" v-on:click="hello">say hello</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script>
+        // const axios = require('axios');
+        var vue = new Vue({
+            el: '#app',
+            data: {
+                message: '', 
+                model: {
+                    "Code": "10010",
+                    "StoreId": 123,
+                    "OrderAmount": 135.5,
+                    "PaidDate": "2018-09-28 10:12:00",
+                    "Items": [
+                        {
+                            "ProductId": 1,
+                            "ProductName": "花生米",
+                            "ProductCode": "10235687",
+                            "SalePrice": 12.5,
+                            "RealPrice": 11.5,
+                            "Quantity": 10
+                        },
+                        {
+                            "ProductId": 2,
+                            "ProductName": "泡椒凤爪",
+                            "ProductCode": "10235000",
+                            "SalePrice": 25.5,
+                            "RealPrice": 20.5,
+                            "Quantity": 1
+                        }
+                    ]
+                }
+            },
+            methods: {
+                print: function () {
+                    var _self = this;
+                    axios.post('http://localhost:20020/ticket/print', _self.model,
+                        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                        .then(function (response) {
+                            var result = response.data;
+                            if (result.success) {
+                                _self.message = result.data;
+                            }
+                            else {
+                                _self.message = result.message;
+                            }
+                           
+                        }).catch(function (error) {
+                            console.log(error)
+                        });
+                },
+                hello: function () {
+                    var _self = this;
+                    axios.get('http://localhost:20020/hello')
+                    .then(function (response) {
+                        var result = response.data;
+                        if (result.success) {
+                            _self.message = result.data;
+                        }
+                        else {
+                            _self.message = result.message;
+                        }
+
+                    }).catch(function (error) {
+                        console.log(error)
+                    });
+                }
+            },
+            created: function () {
+             
+            }
+        })
+    </script>
+</body>
+</html>
